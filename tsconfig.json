@@ -23,5 +23,5 @@
       "#/*": ["db/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src","prisma"]
 }
