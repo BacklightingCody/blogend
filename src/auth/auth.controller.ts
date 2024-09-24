@@ -17,8 +17,29 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  async signIn(@Body() signInDto: Record<string, any>) {
+    const { accessToken, refreshToken } = await this.authService.login(
+      signInDto.username,
+      signInDto.password,
+    );
+
+    return {
+      data: {
+        accessToken,
+        refreshToken,
+      },
+    };
+  }
+
+  @Post('refresh_token')
+  async getRefreshToken(@Body() req: { refreshToken: string }) {
+    const { refreshToken } = req; // 提取 refreshToken
+    const { accessToken } = await this.authService.refreshToken(refreshToken); // 直接传递 refreshToken
+    return {
+      data: {
+        accessToken,
+      },
+    };
   }
 
   @UseGuards(AuthGuard)
