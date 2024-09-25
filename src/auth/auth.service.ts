@@ -35,11 +35,16 @@ export class AuthService {
     }
 
     const userInfo = this.tokenService.verifyRefreshToken(refreshToken); // 验证刷新令牌
-
     const payload = { username: userInfo.username };
-    const accessToken = this.tokenService.generateAccessToken(payload);
+    console.log(this.refreshTokens, '3');
+    const newAccessToken = this.tokenService.generateAccessToken(payload);
+    // const newRefreshToken = this.tokenService.generateRefreshToken(payload);
 
-    return { accessToken };
+    // 删除旧的刷新令牌，存储新的刷新令牌
+    // this.refreshTokens = this.refreshTokens.filter((item) => item !== refreshToken);
+    // this.refreshTokens.push(newRefreshToken);
+
+    return newAccessToken;
   }
 
   logout(token: string) {
