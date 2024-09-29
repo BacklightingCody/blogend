@@ -31,4 +31,18 @@ export class UsersService {
   async findOne(username: string): Promise<User | undefined> {
     return this.users.find((user) => user.username === username);
   }
+
+  async findOrCreateByOAuth(username: string): Promise<User> {
+    let user = await this.findOne(username);
+    if (!user) {
+      // If user does not exist, create a new one
+      user = {
+        userId: this.users.length + 1, // Simple ID assignment, you may want to replace this with a more robust method
+        username,
+        password: null, // No password for OAuth users
+      };
+      this.users.push(user);
+    }
+    return user;
+  }
 }

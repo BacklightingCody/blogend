@@ -11,6 +11,20 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
+  async loginWithOAuth(gitHubUser: any) {
+    const { login: username } = gitHubUser;
+
+    // 查找或创建 GitHub 用户
+    const user = await this.usersService.findOrCreateByOAuth(username);
+
+    // 生成 JWT token
+    const payload = { sub: user.userId, username: user.username };
+    const accessToken = this.tokenService.generateAccessToken(payload);
+    const refreshToken = this.tokenService.generateRefreshToken(payload);
+
+    return { accessToken, refreshToken };
+  }
+
   async login(username: string, password: string) {
     const user = await this.usersService.findOne(username);
     if (user?.password !== password) {
