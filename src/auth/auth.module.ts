@@ -6,7 +6,7 @@ import { AuthController } from './auth.controller';
 import { jwtConstants } from './constants';
 import { TokenService } from '@/utils/token.service';
 import { PassportModule } from '@nestjs/passport'; // 新增
-import { GitHubGuard } from './github.guard';
+// import { GitHubGuard } from './github.guard';
 import { GithubStrategy } from './github.strategy'; // 新增
 
 @Module({
@@ -19,7 +19,7 @@ import { GithubStrategy } from './github.strategy'; // 新增
       signOptions: { expiresIn: '10s' },
     }),
   ],
-  providers: [AuthService, TokenService, GithubStrategy, GitHubGuard],
+  providers: [AuthService, TokenService, GithubStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

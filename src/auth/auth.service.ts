@@ -1,7 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { TokenService } from '@/utils/token.service';
 import { UsersService } from '@/feature/users/users.service';
-
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
 @Injectable()
 export class AuthService {
   private refreshTokens: string[] = [];
@@ -9,22 +10,65 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly tokenService: TokenService,
+    private readonly configService: ConfigService,
   ) {}
 
-  async loginWithOAuth(gitHubUser: any) {
-    const { login: username } = gitHubUser;
+  // GitHub OAuth 登录逻辑
+  async githubLogin(code: string): Promise<any> {
+    if (!code) {
+      throw new UnauthorizedException('No code provided');
+    }
+    console.log(code);
+    const accessToken = await this.getAccessTokenFromGitHub(code);
+    const gitHubUser = await this.getGitHubUser(accessToken);
 
     // 查找或创建 GitHub 用户
-    const user = await this.usersService.findOrCreateByOAuth(username);
+    const user = await this.usersService.findOrCreateByOAuth(gitHubUser.login);
 
     // 生成 JWT token
     const payload = { sub: user.userId, username: user.username };
-    const accessToken = this.tokenService.generateAccessToken(payload);
+    const accessTokenJWT = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
 
-    return { accessToken, refreshToken };
+    return { accessToken: accessTokenJWT, refreshToken };
   }
 
+  // 获取 GitHub access token 的方法
+  private async getAccessTokenFromGitHub(code: string): Promise<string> {
+    const clientId = this.configService.get<string>('GITHUB_CLIENT_ID');
+    const clientSecret = this.configService.get<string>('GITHUB_CLIENT_SECRET');
+
+    const response = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      {
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+      },
+      {
+        headers: { Accept: 'application/json' },
+      },
+    );
+
+    if (!response.data.access_token) {
+      throw new UnauthorizedException('Failed to retrieve GitHub access token');
+    }
+    console.log(response.data.access_token);
+    return response.data.access_token;
+  }
+
+  // 获取 GitHub 用户信息
+  private async getGitHubUser(accessToken: string): Promise<any> {
+    const response = await axios.get('https://api.github.com/user', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+
+    if (!response.data) {
+      throw new UnauthorizedException('Failed to retrieve GitHub user info');
+    }
+    console.log(response.data);
+    return response.data;
+  }
   async login(username: string, password: string) {
     const user = await this.usersService.findOne(username);
     if (user?.password !== password) {

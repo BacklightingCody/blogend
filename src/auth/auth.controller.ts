@@ -6,33 +6,40 @@ import {
   HttpStatus,
   Post,
   Res,
-  Req,
   UseGuards,
   Param,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
-import { GitHubGuard } from './github.guard';
+import { ConfigService } from '@nestjs/config';
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
+  // GitHub 登录重定向
 
-  @HttpCode(HttpStatus.OK)
+  // GitHub 回调处理
   @Get('github')
-  @UseGuards(GitHubGuard)
-  async githubLogin() {
-    // GitHub 登录重定向到 GitHub 授权页面
-  }
+  @HttpCode(HttpStatus.OK)
+  async githubLoginCallback(@Query('code') code: string, @Res() res: Response) {
+    try {
+      const { accessToken, refreshToken } = await this.authService.githubLogin(code);
+      // 将 Token 设置到 Cookie 中
+      res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
 
-  @Get('github/callback')
-  @UseGuards(GitHubGuard)
-  async githubLoginCallback(@Req() req, @Res() res) {
-    // GitHub 回调后的逻辑，可以将用户信息存入 cookie 或 JWT token
-    const { accessToken, refreshToken } = await this.authService.loginWithOAuth(req.user);
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-    return res.redirect('/'); // 登录成功后跳转页面
+      return res.redirect('http://localhost:5173'); // 登录成功后跳转页面
+    } catch (error) {
+      return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'GitHub login failed', error });
+    }
   }
 
   @Post('login')
