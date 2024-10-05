@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from '@/auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ResponseInterceptor } from '@/interceptors/response.interceptors';
+import { ResponseInterceptor } from '@/common/interceptors/response.interceptors';
 
 @Module({
   imports: [

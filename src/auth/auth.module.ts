@@ -8,7 +8,7 @@ import { TokenService } from '@/utils/token.service';
 import { PassportModule } from '@nestjs/passport'; // 新增
 // import { GitHubGuard } from './github.guard';
 import { GithubStrategy } from './github.strategy'; // 新增
-
+import { PrismaService } from '#/prisma.service';
 @Module({
   imports: [
     UsersModule,
@@ -19,7 +19,7 @@ import { GithubStrategy } from './github.strategy'; // 新增
       signOptions: { expiresIn: '10s' },
     }),
   ],
-  providers: [AuthService, TokenService, GithubStrategy],
+  providers: [AuthService, TokenService, GithubStrategy, PrismaService],
   controllers: [AuthController],
   exports: [AuthService],
 })

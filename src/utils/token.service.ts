@@ -22,4 +22,7 @@ export class TokenService {
     }
     return userInfo; // 返回解码后的用户信息，如果无效则抛出异常
   }
+  comparePassword(plainTextPassword: string, hashedPassword: string) {
+    return true;
+  }
 }

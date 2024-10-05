@@ -1,48 +1,36 @@
 import { Injectable } from '@nestjs/common';
-
-// This should be a real class/interface representing a user entity
-export type User = any;
-
+import { PrismaService } from '#/prisma.service';
+import { User } from '@prisma/client';
+import { CreateUserDto } from './dto/create-user.dto';
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-    {
-      userId: 3,
-      username: 'admin',
-      password: 'admin',
-    },
-    {
-      userId: 4,
-      username: 'backlighting',
-      password: '123456',
-    },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  // 根据用户名查找用户
+  async findOne(username: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { username },
+    });
   }
 
-  async findOrCreateByOAuth(username: string): Promise<User> {
-    let user = await this.findOne(username);
+  // 查找或通过 OAuth 创建用户
+  async findOrCreateByOAuth(dto: CreateUserDto): Promise<User> {
+    // 查找现有用户
+    let user = await this.findOne(dto.username);
+
+    // 如果用户不存在，创建一个新用户
     if (!user) {
-      // If user does not exist, create a new one
-      user = {
-        userId: this.users.length + 1, // Simple ID assignment, you may want to replace this with a more robust method
-        username,
-        password: null, // No password for OAuth users
-      };
-      this.users.push(user);
+      user = await this.prisma.user.create({
+        data: {
+          username: dto.username,
+          avatarUrl: dto.avatarUrl,
+          email: dto.email,
+          bio: dto.bio,
+          password: dto.password, // OAuth 用户不需要密码
+        },
+      });
     }
+
     return user;
   }
 }

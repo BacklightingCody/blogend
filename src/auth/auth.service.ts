@@ -2,7 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { TokenService } from '@/utils/token.service';
 import { UsersService } from '@/feature/users/users.service';
 import { ConfigService } from '@nestjs/config';
+import { CreateUserDto } from './dto/create-user.dto';
 import axios from 'axios';
+
 @Injectable()
 export class AuthService {
   private refreshTokens: string[] = [];
@@ -14,19 +16,28 @@ export class AuthService {
   ) {}
 
   // GitHub OAuth 登录逻辑
-  async githubLogin(code: string): Promise<any> {
+  async githubLogin(code: string): Promise<{ accessToken: string; refreshToken: string }> {
     if (!code) {
       throw new UnauthorizedException('No code provided');
     }
-    console.log(code);
+
     const accessToken = await this.getAccessTokenFromGitHub(code);
     const gitHubUser = await this.getGitHubUser(accessToken);
+    console.log(gitHubUser);
+    // 构建 DTO 对象
+    const createUserDto: CreateUserDto = {
+      username: gitHubUser.login,
+      avatarUrl: gitHubUser.avatar_url,
+      bio: gitHubUser.bio || null,
+      email: gitHubUser.email || null, // 如果 GitHub 提供了 email
+      password: null,
+    };
 
     // 查找或创建 GitHub 用户
-    const user = await this.usersService.findOrCreateByOAuth(gitHubUser.login);
+    const user = await this.usersService.findOrCreateByOAuth(createUserDto);
 
     // 生成 JWT token
-    const payload = { sub: user.userId, username: user.username };
+    const payload = { sub: user.id, username: user.username };
     const accessTokenJWT = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
 
@@ -38,53 +49,60 @@ export class AuthService {
     const clientId = this.configService.get<string>('GITHUB_CLIENT_ID');
     const clientSecret = this.configService.get<string>('GITHUB_CLIENT_SECRET');
 
-    const response = await axios.post(
-      'https://github.com/login/oauth/access_token',
-      {
-        client_id: clientId,
-        client_secret: clientSecret,
-        code,
-      },
-      {
-        headers: { Accept: 'application/json' },
-      },
-    );
+    try {
+      const response = await axios.post(
+        'https://github.com/login/oauth/access_token',
+        {
+          client_id: clientId,
+          client_secret: clientSecret,
+          code,
+        },
+        {
+          headers: { Accept: 'application/json' },
+        },
+      );
 
-    if (!response.data.access_token) {
-      throw new UnauthorizedException('Failed to retrieve GitHub access token');
+      if (!response.data.access_token) {
+        throw new UnauthorizedException('Failed to retrieve GitHub access token');
+      }
+
+      return response.data.access_token;
+    } catch (error) {
+      console.log(error);
+      throw new UnauthorizedException('Error fetching access token from GitHub');
     }
-    console.log(response.data.access_token);
-    return response.data.access_token;
   }
 
   // 获取 GitHub 用户信息
   private async getGitHubUser(accessToken: string): Promise<any> {
-    const response = await axios.get('https://api.github.com/user', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    try {
+      const response = await axios.get('https://api.github.com/user', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
 
-    if (!response.data) {
-      throw new UnauthorizedException('Failed to retrieve GitHub user info');
+      if (!response.data) {
+        throw new UnauthorizedException('Failed to retrieve GitHub user info');
+      }
+
+      return response.data;
+    } catch (error) {
+      throw new UnauthorizedException('Error fetching user info from GitHub');
     }
-    console.log(response.data);
-    return response.data;
   }
+
   async login(username: string, password: string) {
     const user = await this.usersService.findOne(username);
-    if (user?.password !== password) {
+    if (!user || !(await this.tokenService.comparePassword(password, user.password))) {
       throw new UnauthorizedException('用户名或密码错误');
     }
 
-    const payload = { sub: user.userId, username: user.username };
+    const payload = { sub: user.id, username: user.username };
     const accessToken = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
 
     this.refreshTokens.push(refreshToken); // 保存刷新令牌
 
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return { accessToken, refreshToken };
   }
 
   async refreshToken(refreshToken: string) {
@@ -94,15 +112,11 @@ export class AuthService {
 
     const userInfo = this.tokenService.verifyRefreshToken(refreshToken); // 验证刷新令牌
     const payload = { username: userInfo.username };
-    console.log(this.refreshTokens, '3');
+
     const newAccessToken = this.tokenService.generateAccessToken(payload);
-    // const newRefreshToken = this.tokenService.generateRefreshToken(payload);
+    // 如果需要，生成新的刷新令牌并更新
 
-    // 删除旧的刷新令牌，存储新的刷新令牌
-    // this.refreshTokens = this.refreshTokens.filter((item) => item !== refreshToken);
-    // this.refreshTokens.push(newRefreshToken);
-
-    return newAccessToken;
+    return { accessToken: newAccessToken };
   }
 
   logout(token: string) {

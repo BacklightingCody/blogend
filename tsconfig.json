@@ -20,7 +20,7 @@
     "paths": {
       "@/*": ["src/*"],
       "~/*": ["src/types/*"],
-      "#/*": ["db/*"]
+      "#/*": ["prisma/*"]
     }
   },
   "include": ["src", "prisma"]

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { HttpExceptionFilter } from '@/filters/http-exception.filter';
+import { HttpExceptionFilter } from '@/common/filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser'; //引入cookie-parser
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
