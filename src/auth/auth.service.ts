@@ -26,6 +26,7 @@ export class AuthService {
     console.log(gitHubUser);
     // 构建 DTO 对象
     const createUserDto: CreateUserDto = {
+      id: Date.now().toString(), // 以时间戳为 ID
       username: gitHubUser.login,
       avatarUrl: gitHubUser.avatar_url,
       bio: gitHubUser.bio || null,
@@ -35,7 +36,7 @@ export class AuthService {
 
     // 查找或创建 GitHub 用户
     const user = await this.usersService.findOrCreateByOAuth(createUserDto);
-
+    console.log(user);
     // 生成 JWT token
     const payload = { sub: user.id, username: user.username };
     const accessTokenJWT = this.tokenService.generateAccessToken(payload);

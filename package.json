@@ -27,7 +27,7 @@
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "axios": "^1.7.7",
     "cookie-parser": "^1.4.6",
     "mongodb": "^6.9.0",

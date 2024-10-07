@@ -1,5 +1,5 @@
 export class CreateUserDto {
-  id?: number; // Auto-incremented, can be omitted when creating a new user
+  id?: string; // Auto-incremented, can be omitted when creating a new user
   username?: string; // Required but optional for DTO flexibility
   email?: string; // Required but optional for DTO flexibility
   password?: string; // Can be null or empty for OAuth users
