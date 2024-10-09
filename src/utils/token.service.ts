@@ -16,11 +16,12 @@ export class TokenService {
 
   verifyRefreshToken(token: string): any {
     // 直接调用 verify 方法，捕获未验证通过的情况
-    const userInfo = this.jwtService.verify(token);
-    if (!userInfo) {
-      throw new UnauthorizedException('token无效');
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      // console.log(error);
+      return null;
     }
-    return userInfo; // 返回解码后的用户信息，如果无效则抛出异常
   }
   comparePassword(plainTextPassword: string, hashedPassword: string) {
     return true;

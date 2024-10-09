@@ -41,7 +41,7 @@ export class AuthService {
     const payload = { sub: user.id, username: user.username };
     const accessTokenJWT = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
-
+    this.refreshTokens.push(refreshToken);
     return { accessToken: accessTokenJWT, refreshToken };
   }
 
@@ -107,17 +107,20 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string) {
+    // console.log('refresh');
+    // console.log(this.refreshTokens);
     if (!refreshToken || !this.refreshTokens.includes(refreshToken)) {
       throw new UnauthorizedException('无效的刷新令牌');
     }
-
+    console.log(refreshToken);
     const userInfo = this.tokenService.verifyRefreshToken(refreshToken); // 验证刷新令牌
-    const payload = { username: userInfo.username };
+    console.log(userInfo);
+    const payload = { id: userInfo.id, username: userInfo.username };
 
     const newAccessToken = this.tokenService.generateAccessToken(payload);
     // 如果需要，生成新的刷新令牌并更新
 
-    return { accessToken: newAccessToken };
+    return newAccessToken;
   }
 
   logout(token: string) {
