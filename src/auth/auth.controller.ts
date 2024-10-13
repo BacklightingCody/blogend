@@ -21,7 +21,15 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
   // GitHub 登录重定向
-
+  @Get('github/redirect')
+  async githubLoginRedirect(@Res() res: Response) {
+    console.log('请求来了');
+    const clientId = this.configService.get<string>('GITHUB_CLIENT_ID');
+    const redirectUri = this.configService.get<string>('GITHUB_CALLBACK_URL');
+    // const scope = 'user:email';
+    const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
+    res.redirect(url);
+  }
   // GitHub 回调处理
   @Get('github')
   @HttpCode(HttpStatus.OK)
@@ -36,7 +44,11 @@ export class AuthController {
         sameSite: 'strict',
       });
 
-      return res.redirect('http://localhost:5173'); // 登录成功后跳转页面
+      res.redirect('http://localhost:5173?logged_in=true'); // 登录成功后跳转页面
+      return {
+        data: {},
+        message: '登录成功',
+      };
     } catch (error) {
       return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'GitHub login failed', error });
     }
