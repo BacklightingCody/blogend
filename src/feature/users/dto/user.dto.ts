@@ -13,3 +13,14 @@ export class CreateUserDto {
   favorites?: any[]; // Same for Favorite
   histories?: any[]; // Same for History
 }
+
+export class UserInfoDto {
+  id: string;
+  username: string;
+  email: string;
+  avatarUrl: string;
+  posts: [];
+  comments: [];
+  favorites: [];
+  histories: [];
+}

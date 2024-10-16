@@ -35,16 +35,21 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async githubLoginCallback(@Query('code') code: string, @Res() res: Response) {
     try {
-      const { accessToken, refreshToken } = await this.authService.githubLogin(code);
+      const { accessToken, refreshToken, id, username } = await this.authService.githubLogin(code);
       // 将 Token 设置到 Cookie 中
-      res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-      res.cookie('refreshToken', refreshToken, {
+      res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
       });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 60 * 1000 * 60 * 24 * 7,
+      });
 
-      res.redirect('http://localhost:5173?logged_in=true'); // 登录成功后跳转页面
+      res.redirect(`http://localhost:5173?logged_in=true&&user_id=${id}&&username=${username}`); // 登录成功后跳转页面
       return {
         data: {},
         message: '登录成功',

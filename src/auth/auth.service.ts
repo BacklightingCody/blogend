@@ -16,7 +16,9 @@ export class AuthService {
   ) {}
 
   // GitHub OAuth 登录逻辑
-  async githubLogin(code: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async githubLogin(
+    code: string,
+  ): Promise<{ accessToken: string; refreshToken: string; id: string; username: string }> {
     if (!code) {
       throw new UnauthorizedException('No code provided');
     }
@@ -42,7 +44,7 @@ export class AuthService {
     const accessTokenJWT = this.tokenService.generateAccessToken(payload);
     const refreshToken = this.tokenService.generateRefreshToken(payload);
     this.refreshTokens.push(refreshToken);
-    return { accessToken: accessTokenJWT, refreshToken };
+    return { accessToken: accessTokenJWT, refreshToken, id: user.id, username: user.username };
   }
 
   // 获取 GitHub access token 的方法
@@ -107,7 +109,7 @@ export class AuthService {
   }
 
   async refreshToken(refreshToken: string) {
-    // console.log('refresh');
+    console.log('refresh');
     // console.log(this.refreshTokens);
     if (!refreshToken || !this.refreshTokens.includes(refreshToken)) {
       throw new UnauthorizedException('无效的刷新令牌');

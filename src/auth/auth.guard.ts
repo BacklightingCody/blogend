@@ -21,7 +21,6 @@ export class AuthGuard implements CanActivate {
     try {
       // 尝试验证 accessToken
       const payload = await this.jwtService.verifyAsync(token);
-      console.log(payload, 'payload');
       request['user'] = payload; // 将用户信息附加到请求对象
 
       // 检查 accessToken 是否快过期
