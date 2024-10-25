@@ -7,15 +7,25 @@ import { TestModule } from '@/feature/test/test.module';
 import { UsersModule } from './feature/users/users.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from '@/common/interceptors/response.interceptors';
+import { PrismaModule } from '@/prisma.module';
+export const IS_DEV = process.env.RUNNING_ENV !== 'prod';
+const envFilePath = ['.env'];
+
+if (IS_DEV) {
+  envFilePath.unshift('.env.dev');
+} else {
+  envFilePath.unshift('.env.prod');
+}
 
 @Module({
   imports: [
+    PrismaModule,
     AuthModule,
     TestModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env', // 指定.env文件的位置
+      envFilePath,
       // load: [configuration], // 加载配置文件
     }),
   ],

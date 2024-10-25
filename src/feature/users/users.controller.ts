@@ -13,7 +13,8 @@ export class UsersController {
   // async getUserInfo(@Query('id') id: string, @Query('username') username: string) {
   async getUserInfo(@Req() request) {
     // 根据 ID 或用户名查找用户
-    console.log(request.cookies);
+    console.log(request.user, 'cookies');
+    // console.log(request);
     const userinfo = request.user;
     const identifier = userinfo.id ? userinfo.id : userinfo.sub || userinfo.username;
     if (!identifier) {
