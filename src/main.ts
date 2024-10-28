@@ -5,7 +5,7 @@ import { HttpExceptionFilter } from '@/common/filters/http-exception.filter';
 import * as cookieParser from 'cookie-parser'; //引入cookie-parser
 import { AppModule, IS_DEV } from './app.module';
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +15,7 @@ async function bootstrap() {
   app.enableCors(); // 配置 CORS
   app.use(cookieParser());
   console.log(`Port: ${PORT}`, IS_DEV);
-  await app.listen(PORT);
+  await app.listen(PORT, '0.0.0.0');
 }
 
 bootstrap();

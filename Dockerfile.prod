@@ -1,0 +1,19 @@
+# 生产环境 Dockerfile
+FROM node:21.7.3-alpine3.20
+
+WORKDIR /app
+
+COPY package*.json pnpm-lock.yaml ./
+RUN npm install -g pnpm 
+COPY prisma ./prisma/
+# 安装生产依赖
+RUN pnpm install --production
+
+RUN npx prisma generate
+COPY .env .env.prod ./
+COPY dist ./dist
+# 暴露应用的端口
+EXPOSE 3000
+
+# 使用生产环境启动命令
+CMD ["pnpm", "start:prod"]

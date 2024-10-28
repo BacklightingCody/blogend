@@ -26,6 +26,7 @@ export class AuthController {
     console.log('请求来了');
     const clientId = this.configService.get<string>('GITHUB_CLIENT_ID');
     const redirectUri = this.configService.get<string>('GITHUB_CALLBACK_URL');
+    console.log(redirectUri, 11);
     // const scope = 'user:email';
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
     res.redirect(url);
@@ -49,7 +50,9 @@ export class AuthController {
         maxAge: 60 * 1000 * 60 * 24 * 7,
       });
 
-      res.redirect(`http://localhost:5173?logged_in=true&&user_id=${id}&&username=${username}`); // 登录成功后跳转页面
+      res.redirect(
+        `${process.env.FRONTEND_URL}?logged_in=true&&user_id=${id}&username=${username}`,
+      ); // 登录成功后跳转页面
       return {
         data: {},
         message: '登录成功',
