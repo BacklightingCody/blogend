@@ -12,7 +12,11 @@ async function bootstrap() {
   app.setGlobalPrefix('v0'); //设置全局路由公共前缀
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(); // 可以根据需要添加管道
-  app.enableCors(); // 配置 CORS
+  // 配置 CORS
+  app.enableCors({
+    origin: 'https://www.backlighting.cn/', // 允许的前端地址
+    credentials: true, // 允许携带 Cookie
+  });
   app.use(cookieParser());
   console.log(`Port: ${PORT}`, IS_DEV);
   await app.listen(PORT, '0.0.0.0');
