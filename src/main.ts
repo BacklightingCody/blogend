@@ -19,6 +19,7 @@ async function bootstrap() {
   });
   app.use(cookieParser());
   console.log(`Port: ${PORT}`, IS_DEV);
+  console.log('origin:', process.env.FRONTEND_URL);
   await app.listen(PORT, '0.0.0.0');
 }
 

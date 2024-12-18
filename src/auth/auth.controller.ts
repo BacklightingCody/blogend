@@ -40,13 +40,13 @@ export class AuthController {
       // 将 Token 设置到 Cookie 中
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
-        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
+        sameSite: 'none',
       });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
-        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
+        sameSite: 'none',
         maxAge: 60 * 1000 * 60 * 24 * 7,
       });
 
@@ -71,13 +71,13 @@ export class AuthController {
     // 设置 HttpOnly 和 Secure 的 cookie
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
+      sameSite: 'none',
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
-      sameSite: 'strict',
+      secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
+      sameSite: 'none',
     });
     return {
       data: {},
@@ -101,7 +101,7 @@ export class AuthController {
     });
     // res.cookie('refreshToken', newRefreshToken, {
     //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
+    //   secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
     // });
 
     return {
