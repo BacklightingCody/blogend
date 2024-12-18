@@ -14,7 +14,7 @@ async function bootstrap() {
   app.useGlobalPipes(); // 可以根据需要添加管道
   // 配置 CORS
   app.enableCors({
-    origin: 'https://www.backlighting.cn/', // 允许的前端地址
+    origin: process.env.FRONTEND_URL, // 允许的前端地址
     credentials: true, // 允许携带 Cookie
   });
   app.use(cookieParser());

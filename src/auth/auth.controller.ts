@@ -55,10 +55,10 @@ export class AuthController {
       ); // 登录成功后跳转页面
       return {
         data: {},
-        message: '登录成功',
+        msg: '登录成功',
       };
     } catch (error) {
-      return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'GitHub login failed', error });
+      return res.status(HttpStatus.UNAUTHORIZED).json({ msg: 'GitHub login failed', error });
     }
   }
 
@@ -98,7 +98,7 @@ export class AuthController {
 
     return {
       data: {},
-      message: '令牌刷新成功',
+      msg: '令牌刷新成功',
     };
   }
 

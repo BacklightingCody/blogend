@@ -8,6 +8,7 @@ export class UsersService {
 
   // 根据用户名或ID查找用户
   async findOne(identifier: string): Promise<User | null> {
+    console.log(identifier, 'findOne');
     return this.prisma.user.findFirst({
       where: {
         OR: [
@@ -49,7 +50,6 @@ export class UsersService {
       console.log(user, '222');
     }
 
-    console.log(user);
     return user;
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpStatus, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, UseGuards } from '@nestjs/common';
 // import { Response } from 'express';
 import { UsersService } from './users.service';
 import { AuthGuard } from '@/auth/auth.guard';
@@ -10,13 +10,9 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @Get('info')
-  // async getUserInfo(@Query('id') id: string, @Query('username') username: string) {
-  async getUserInfo(@Req() request) {
-    // 根据 ID 或用户名查找用户
-    console.log(request.user, 'cookies');
-    // console.log(request);
-    const userinfo = request.user;
-    const identifier = userinfo.id ? userinfo.id : userinfo.sub || userinfo.username;
+  async getUserInfo(@Query('userId') userId: string, @Query('username') username: string) {
+    // 确保接收到的参数非空
+    const identifier = userId || username;
     if (!identifier) {
       return {
         msg: 'Missing identifier',
@@ -24,11 +20,12 @@ export class UsersController {
       };
     }
 
+    // 根据传入的 userId 或 username 查询用户
     const user = await this.usersService.findOne(identifier);
     if (!user) {
       return {
-        code: 401,
-        msg: '用户未登录',
+        code: 404,
+        msg: '用户未找到',
         data: {},
       };
     }
