@@ -40,12 +40,12 @@ export class AuthController {
       // 将 Token 设置到 Cookie 中
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
         sameSite: 'strict',
       });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
         sameSite: 'strict',
         maxAge: 60 * 1000 * 60 * 24 * 7,
       });
@@ -69,8 +69,16 @@ export class AuthController {
       signInDto.password,
     );
     // 设置 HttpOnly 和 Secure 的 cookie
-    res.cookie('accessToken', accessToken, { httpOnly: true, secure: true, sameSite: 'strict' });
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict' });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
+      sameSite: 'strict',
+    });
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
+      sameSite: 'strict',
+    });
     return {
       data: {},
     };
@@ -89,11 +97,11 @@ export class AuthController {
     // 更新 HttpOnly Cookie 中的 accessToken 和 refreshToken
     res.cookie('accessToken', newAccessToken, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
     });
     // res.cookie('refreshToken', newRefreshToken, {
     //   httpOnly: true,
-    //   secure: true,
+    //   secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true',
     // });
 
     return {

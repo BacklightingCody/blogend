@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
             httpOnly: true,
             path: '/',
             sameSite: 'strict',
-            // secure: true, // 在生产环境中使用 HTTPS
+            // secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true', // 在生产环境中使用 HTTPS
           });
           request.cookies['accessToken'] = newAccessToken; // 更新 request 中的 accessToken
         } else {
@@ -55,7 +55,7 @@ export class AuthGuard implements CanActivate {
             httpOnly: true,
             path: '/',
             sameSite: 'strict',
-            // secure: true, // 在生产环境中使用 HTTPS
+            // secure: process.env.NODE_ENV === 'production' && process.env.BACKEND_HTTPS === 'true', // 在生产环境中使用 HTTPS
           });
           request.cookies['accessToken'] = newAccessToken; // 更新 request 中的 accessToken
           return true; // 允许请求继续
