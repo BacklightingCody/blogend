@@ -43,14 +43,18 @@ model Post {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())  // 评论的唯一标识符
+  content   String   // 评论内容
+  post      Post     @relation(fields: [postId], references: [id])  // 关联到某篇文章
+  postId    Int      // 文章ID
+  author    User     @relation(fields: [authorId], references: [id])  // 评论作者
+  authorId  String   // 作者ID
+  createdAt DateTime @default(now())  // 创建时间
+  parentId  Int?     // 可选字段，表示父评论的ID（用于回复）
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id]) // 父评论的关系
+  replies   Comment[] @relation("CommentReplies")  // 与当前评论关联的回复列表
 }
+
 
 model Tag {
   id    Int       @id @default(autoincrement())
