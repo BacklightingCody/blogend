@@ -107,3 +107,9 @@ model Test {
   name  String
   phone String
 }
+
+model Test2 {
+  id    Int    @id @default(autoincrement())
+  name  String
+  phone String
+}
