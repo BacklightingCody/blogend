@@ -21,6 +21,9 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
   // GitHub 登录重定向
+
+  isProduction = process.env.NODE_ENV === 'production';
+
   @Get('github/redirect')
   async githubLoginRedirect(@Res() res: Response) {
     console.log('请求来了');
@@ -41,15 +44,14 @@ export class AuthController {
       res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
-        sameSite: 'none',
+        sameSite: this.isProduction ? 'none' : 'lax',
       });
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
-        sameSite: 'none',
+        sameSite: this.isProduction ? 'none' : 'lax',
         maxAge: 60 * 1000 * 60 * 24 * 7,
       });
-
       res.redirect(
         `${process.env.FRONTEND_URL}?logged_in=true&&user_id=${id}&username=${username}`,
       ); // 登录成功后跳转页面
@@ -72,12 +74,12 @@ export class AuthController {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
-      sameSite: 'none',
+      sameSite: this.isProduction ? 'none' : 'lax',
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
-      sameSite: 'none',
+      sameSite: this.isProduction ? 'none' : 'lax',
     });
     return {
       data: {},
@@ -102,6 +104,7 @@ export class AuthController {
     // res.cookie('refreshToken', newRefreshToken, {
     //   httpOnly: true,
     //   secure: process.env.NODE_ENV === 'production' && process.env.FRONTED_HTTPS === 'true',
+    //   sameSite: this.isProduction ? 'none' : 'lax'
     // });
 
     return {
