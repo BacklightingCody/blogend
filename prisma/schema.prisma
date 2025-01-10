@@ -53,6 +53,7 @@ model Comment {
   parentId  Int?     // 可选字段，表示父评论的ID（用于回复）
   parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id]) // 父评论的关系
   replies   Comment[] @relation("CommentReplies")  // 与当前评论关联的回复列表
+  likes     Int      @default(0)  // 点赞数，默认为 0
 }
 
 
