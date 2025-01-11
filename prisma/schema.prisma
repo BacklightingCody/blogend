@@ -19,15 +19,15 @@ model User {
   avatarUrl String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
-  favorites Favorite[]
-  histories History[]
+  posts     Post[]     // 用户发布的文章
+  comments  Comment[]  // 用户的评论
+  likes     Like[]     // 用户点赞的记录
+  favorites Favorite[] // 用户收藏的记录
+  histories History[]  // 用户浏览历史
 }
 
 model Post {
-  id        Int        @id @default(autoincrement())
+  id        String     @id // 修改为 String 类型，生成哈希值作为 ID
   title     String     @db.VarChar(255)
   content   String?
   published Boolean    @default(false)
@@ -35,37 +35,36 @@ model Post {
   authorId  String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  comments  Comment[]
-  tags      PostTag[]
-  likes     Like[]
-  History   History[]
-  Favorite  Favorite[]
+  comments  Comment[]  // 文章的评论
+  tags      PostTag[]  // 文章的标签
+  likes     Like[]     // 点赞记录
+  History   History[]  // 浏览历史记录
+  Favorite  Favorite[] // 收藏记录
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())  // 评论的唯一标识符
-  content   String   // 评论内容
-  post      Post     @relation(fields: [postId], references: [id])  // 关联到某篇文章
-  postId    Int      // 文章ID
-  author    User     @relation(fields: [authorId], references: [id])  // 评论作者
-  authorId  String   // 作者ID
-  createdAt DateTime @default(now())  // 创建时间
-  parentId  Int?     // 可选字段，表示父评论的ID（用于回复）
-  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id]) // 父评论的关系
-  replies   Comment[] @relation("CommentReplies")  // 与当前评论关联的回复列表
-  likes     Int      @default(0)  // 点赞数，默认为 0
+  id        Int      @id @default(autoincrement())
+  content   Json
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    String   // 修改为 String 类型，与 Post 的 id 匹配
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  createdAt DateTime @default(now())
+  parentId  Int?
+  parent    Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies") // 回复列表
+  likes     Int      @default(0) // 点赞数
 }
-
 
 model Tag {
   id    Int       @id @default(autoincrement())
   name  String    @unique
-  posts PostTag[]
+  posts PostTag[] // 文章标签关联
 }
 
 model PostTag {
   post   Post @relation(fields: [postId], references: [id])
-  postId Int
+  postId String  // 修改为 String 类型，与 Post 的 id 匹配
   tag    Tag  @relation(fields: [tagId], references: [id])
   tagId  Int
 
@@ -75,12 +74,12 @@ model PostTag {
 model Like {
   id        Int      @id @default(autoincrement())
   post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
+  postId    String   // 修改为 String 类型，与 Post 的 id 匹配
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
 
-  @@unique([postId, userId]) // 保证一个用户只能给同一篇文章点赞一次
+  @@unique([postId, userId]) // 确保用户对同一篇文章只能点赞一次
 }
 
 model History {
@@ -88,7 +87,7 @@ model History {
   user     User     @relation(fields: [userId], references: [id])
   userId   String
   post     Post     @relation(fields: [postId], references: [id])
-  postId   Int
+  postId   String   // 修改为 String 类型，与 Post 的 id 匹配
   viewedAt DateTime @default(now()) // 浏览时间
 }
 
@@ -97,10 +96,10 @@ model Favorite {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
+  postId    String   // 修改为 String 类型，与 Post 的 id 匹配
   createdAt DateTime @default(now()) // 收藏时间
 
-  @@unique([postId, userId]) // 保证用户只能收藏同一篇文章一次
+  @@unique([postId, userId]) // 确保用户只能收藏同一篇文章一次
 }
 
 model Test {

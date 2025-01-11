@@ -1,0 +1,23 @@
+{
+  "posts": [
+    {
+      "id": "8354188d21a64b605d49ffbc61e8aa2a",
+      "title": "HTML中的 head 标签及其用途",
+      "content": "This is the content of sample post 1.",
+      "authorId": "1736514409642",
+      "published": true
+    }
+  ],
+  "comments": [
+    {
+      "postId": "8354188d21a64b605d49ffbc61e8aa2a",
+      "authorId": "1736514409642",
+      "content": {
+        "text": "kxc",
+        "images": []
+      },
+      "likes": 0,
+      "parentId": null
+    }
+  ]
+}
