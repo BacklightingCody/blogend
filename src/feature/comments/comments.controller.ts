@@ -39,12 +39,16 @@ export class CommentsController {
 
   // 提交回复
   @Post('comments/:commentId/replies')
-  addReply(
+  async addReply(
     @Param('commentId') commentId: number,
     @Body('userId') userId: string,
     @Body('content') content: { text: string; images: string[] },
   ) {
-    return this.commentsService.createReply(+commentId, userId, content);
+    const newReply = await this.commentsService.createReply(+commentId, userId, content);
+    return {
+      msg: '回复成功',
+      data: { newReply },
+    };
   }
 
   // 点赞评论或回复

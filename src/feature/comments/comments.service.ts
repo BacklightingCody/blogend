@@ -98,9 +98,24 @@ export class CommentsService {
         parentId: commentId, // 关联父评论
         likes: 0, // 初始化点赞数为 0
       },
+      include: {
+        author: true,
+      },
     });
 
-    return { ...newReply, content };
+    return {
+      id: newReply.id,
+      postId: newReply.postId,
+      content: newReply.content,
+      likes: newReply.likes,
+      createdAt: newReply.createdAt,
+      replyTo: commentId, // 标明回复的是哪个评论
+      user: {
+        id: newReply.author.id,
+        nickname: newReply.author.username,
+        avatar: newReply.author.avatarUrl,
+      },
+    };
   }
 
   // 点赞评论
