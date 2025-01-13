@@ -30,10 +30,12 @@ async function main() {
     console.log('Posts inserted successfully.');
 
     // 插入评论数据
-    for (const comment of data.comments) {
-      await prisma.comment.create({
-        data: comment,
-      });
+    if (data.comments) {
+      for (const comment of data.comments) {
+        await prisma.comment.create({
+          data: comment,
+        });
+      }
     }
     console.log('Comments inserted successfully.');
   } catch (error) {
