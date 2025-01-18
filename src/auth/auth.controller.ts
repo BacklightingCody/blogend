@@ -29,7 +29,7 @@ export class AuthController {
     console.log('请求来了');
     const clientId = this.configService.get<string>('GITHUB_CLIENT_ID');
     const redirectUri = this.configService.get<string>('GITHUB_CALLBACK_URL');
-    console.log(redirectUri, 11);
+    // console.log(redirectUri, 11);
     // const scope = 'user:email';
     const url = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
     res.redirect(url);

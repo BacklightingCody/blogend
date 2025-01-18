@@ -19,7 +19,6 @@ export class CommentsService {
         author: true, // 包括评论的用户信息
       },
     });
-    console.log('commentsForPost', commentsForPost);
     // 将查询结果映射为更简洁的结构
     return commentsForPost.map((comment) => ({
       id: comment.id,
@@ -49,12 +48,12 @@ export class CommentsService {
 
   // 创建评论
   async createComment(postId: string, userId: string, content: { text: string; images: string[] }) {
-    console.log('createComment', postId, userId, content);
+    // console.log('createComment', postId, userId, content);
     const newComment = await this.prisma.comment.create({
       data: {
         postId,
         authorId: userId,
-        content,
+        content: { ...content, images: content.images },
         likes: 0, // 初始化点赞数为 0
       },
       include: {
@@ -94,7 +93,7 @@ export class CommentsService {
       data: {
         postId: parentComment.postId, // 继承父评论所属的文章
         authorId: userId,
-        content,
+        content: { ...content, images: content.images },
         parentId: commentId, // 关联父评论
         likes: 0, // 初始化点赞数为 0
       },
