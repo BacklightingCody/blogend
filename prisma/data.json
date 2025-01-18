@@ -97,7 +97,27 @@
       "content": "This is the content of sample post 3.",
       "authorId": "1736514409642",
       "published": true
+    },
+    {
+      "id": "f88430e9fbbe563e2f03ef4226a6acb0",
+      "title": "最长递增子序列",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
+    },
+    {
+      "id": "08eec07f5bf9c2b23aa5e2bab7101bf4",
+      "title": "实时业务数据库对比：MySQL、PostgreSQL、MongoDB",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
+    },
+    {
+      "id": "246dec96cdee978d9d3ef66553c19bf5",
+      "title": "初步理解JSX：React开发的基石与趋势",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
     }
-    
   ]
 }
