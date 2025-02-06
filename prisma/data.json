@@ -118,6 +118,27 @@
       "content": "This is the content of sample post 3.",
       "authorId": "1736514409642",
       "published": true
+    },
+    {
+      "id": "2b6d45defc148196acbb0f61f36c48e6",
+      "title": "linux目录结构与常用命令",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
+    },
+    {
+      "id": "53adc9fefb498d8dfac5897567c643f7",
+      "title": "linux基本指令",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
+    },
+    {
+      "id": "faa6fcbabcbf790b932d3fc4fc6d4368",
+      "title": "了解Docker",
+      "content": "This is the content of sample post 3.",
+      "authorId": "1736514409642",
+      "published": true
     }
   ]
 }
